@@ -90,11 +90,12 @@ module.exports = {
       // }
     ],
     "valineConfig": {
-      "appId": "xxx",// your appId
-      "appKey": "xxx", // your appKey
-      "avatar": "", //
+      "appId": "IIdsmwv4AnRsALe4WzNqWQs0-gzGzoHsz",// your appId
+      "appKey": "igWX6RNWgMgVMmd9rLzQtbeG", // your appKey
+      "avatar": "robohash", //
       "enableQQ": true, //启用昵称框自动获取QQ昵称和QQ头像
-      "requiredFields": ['nick', 'mail'], //设置必填项
+      // "requiredFields": ['nick', 'mail'], //设置必填项
+      "requiredFields": ['nick'], //设置必填项
     },
     "logo": "/logo.png",
     // "huawei": true, //首页出现华为文案
