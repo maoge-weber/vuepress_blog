@@ -4,7 +4,6 @@ name: CI
 
 # Controls when the action will run. Triggers the workflow on push or pull
 # events but only for the master branch
-#触发事件
 on:
   push:
     branches: [ main ]
@@ -15,20 +14,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    #配置腾讯云python环境
-        - uses: actions/setup-python@v1
-          with:
-            python-version: '3.x'
-            architecture: 'x64'
-
-        - name: Install coscmd
-          run: pip install -U coscmd
-
-        - name: Upload COS
-          run: |
-            coscmd config ....
-            coscmd upload -r ./dist/ /
-      
       - name: Checkout
         uses: actions/checkout@v2
         with:
