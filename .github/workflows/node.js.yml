@@ -6,10 +6,10 @@ name: Upload to COS
 on: [push]
 
 jobs:
+# 执行build
   build:
-
     runs-on: ubuntu-latest
-
+#   自动化步骤
     steps:
     - uses: actions/checkout@v2
     - name: Install coscmd
@@ -17,6 +17,7 @@ jobs:
     - name: build
       run: npm run build
     - name: Configure coscmd
+#     配置服务器密钥
       env:
         SECRET_ID: ${{ secrets.SecretId }}
         SECRET_KEY: ${{ secrets.SecretKey }}
@@ -27,5 +28,6 @@ jobs:
       run: coscmd config -a $SECRET_ID -s $SECRET_KEY -b $BUCKET -r $REGION
     - name: Upload
       run: coscmd upload -rs --delete -f ./ / --ignore "./.git/*"
+      
 
 
