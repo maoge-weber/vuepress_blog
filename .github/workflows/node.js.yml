@@ -20,7 +20,7 @@ jobs:
         SECRET_KEY: ${{ secrets.SecretKey }}
         BUCKET: docs-1258965673
         REGION: ap-shanghai
-        LOCAL_DIR: docs/.vuepress/dist
+        LOCAL_DIR: dist
         REMOTE_DIR: /
       run: coscmd config -a $SECRET_ID -s $SECRET_KEY -b $BUCKET -r $REGION
     - name: Upload
