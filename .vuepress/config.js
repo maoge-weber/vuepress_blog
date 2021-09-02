@@ -118,7 +118,7 @@ module.exports = {
       "segmentfault" : false, //思否
       "csdn" : false, //CSDN
       "wechat" : "WD_793082434", //微信
-      "qq" : "793082434" //QQ
+      "qq" : "http://wpa.qq.com/msgrd?v=3&uin=793082434&site=qq&menu=yes" //QQ
     },
     "mottos": [{
       "zh": "愿你保持初心和善良,笑里尽是温暖与坦荡。",
