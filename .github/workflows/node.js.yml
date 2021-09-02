@@ -1,0 +1,50 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull
+# events but only for the master branch
+#触发事件
+on:
+  push:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    #配置腾讯云python环境
+        - uses: actions/setup-python@v1
+          with:
+            python-version: '3.x'
+            architecture: 'x64'
+
+        - name: Install coscmd
+          run: pip install -U coscmd
+
+        - name: Upload COS
+          run: |
+            coscmd config ....
+            coscmd upload -r ./dist/ /
+      
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      # 安装依赖
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+      # 部署到个人阿里云服务器
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@2.0.0
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          LOCAL_DIR: docs/.vuepress/dist
+          REMOTE_DIR: /
