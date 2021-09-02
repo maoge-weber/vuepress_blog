@@ -25,5 +25,12 @@ jobs:
       run: coscmd config -a $SECRET_ID -s $SECRET_KEY -b $BUCKET -r $REGION
     - name: Upload
       run: coscmd upload -rs --delete -f ./ / --ignore "./.git/*"
+      
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.1.3
+      with:
+        # 制品名称
+        name: artifact # optional, default is artifact
+        path: dist
 
 
