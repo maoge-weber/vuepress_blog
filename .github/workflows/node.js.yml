@@ -15,7 +15,7 @@ jobs:
     - name: Install coscmd
       run: sudo pip install coscmd
     - name: build
-      run: vuepress build
+      run: vuepress build .
     - name: Configure coscmd
 #     配置服务器密钥
       env:
