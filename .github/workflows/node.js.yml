@@ -14,8 +14,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install coscmd
       run: sudo pip install coscmd
-    - name: build
-      run: vuepress build .
+    - name: install and build
+      run: 
+          npm install
+          npm run build
     - name: Configure coscmd
 #     配置服务器密钥
       env:
