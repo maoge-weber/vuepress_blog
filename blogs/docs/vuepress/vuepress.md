@@ -22,7 +22,7 @@ categories:
 如何使用vuepress搭建并发布一个博客`express`,`vuepress-theme-reco`
 
 
-创建项目文件目录.
+创建项目文件目录
 ```
 mkdir vuepress-starter && cd vuepress-starter
 ```
