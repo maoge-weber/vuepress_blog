@@ -39,7 +39,7 @@ yarn add -D vuepress # npm install -D vuepress
 ```
 mkdir docs && echo '# Hello VuePress' > docs/README.md
 ```
-配置项目启动命令
+配置项目启动命令.
 ```
 {
   "scripts": {
