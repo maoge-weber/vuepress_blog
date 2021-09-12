@@ -28,6 +28,6 @@ jobs:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          LOCAL_DIR: /dist
+          LOCAL_DIR: docs/.vuepress/dist
           REMOTE_DIR: /    
 
