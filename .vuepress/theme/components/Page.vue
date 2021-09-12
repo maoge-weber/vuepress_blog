@@ -126,7 +126,7 @@
         if (typeof this.$themeConfig.lastUpdated === 'string') {
           return this.$themeConfig.lastUpdated
         }
-        return 'Last Updated'
+        // return 'Last Updated'
       },
       prev() {
         const prev = this.$frontmatter.prev

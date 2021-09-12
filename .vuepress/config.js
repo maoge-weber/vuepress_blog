@@ -101,12 +101,13 @@ module.exports = {
     // "huawei": true, //首页出现华为文案
     "search": true,
     "searchMaxSuggestions": 10,
-    "lastUpdated": "Last Updated",
+    // "lastUpdated": "Last Updated",
+    "lastUpdated": false,
     "author": "猫哥",
     "authorAvatar": "/logo.png",
     "record":false, //icp备案
     "startYear": "2017",
-    "info": "一名追求技术喜欢安静的IT民工/建造师/公路工程师/摄影狗，一只前端开发。",
+    "info": "一名被迫搬砖的IT民工/建造师/公路工程师/摄影狗，一只前端开发。",
     "socials":{
       "github" : false, //github
       "gitlub" : false, //gitlub

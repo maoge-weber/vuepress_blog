@@ -1,6 +1,6 @@
 ---
-title: 谈谈我的第一篇博客1111
-date: 2020-08-31
+title: 聊聊我的博客
+date: 2019-08-31
 cover: https://pan.zealsay.com/mweb/blog/WechatIMG11.png
 tags:
  - vuepress
@@ -9,17 +9,17 @@ categories:
 ---
 
 ::: tip 介绍
-懒癌使用vuepress_blog搭建的第一篇博客<br>
+懒癌使用vuepress搭建的第一篇博客<br>
 :::
 
 <!-- more -->
 
 
-## 懒癌下午突发奇想博客搭了一半还没搭玩
+## 懒癌下午突发奇想博客搭了一半还没搭完
 
 首先安装node环境
 
-如何使用vuepress搭建并发布一个博客`express`,`vuepress-theme-reco`
+如何使用vuepress搭建并发布一个博客`express`
 
 
 创建项目文件目录
@@ -53,6 +53,15 @@ mkdir docs && echo '# Hello VuePress' > docs/README.md
 yarn docs:dev # npm run docs:dev
 ```
 
-### 主题安装
+## 关于项目发布
+关于项目文件发布，你可以选择用日常用的FTP部署到服务器，
+但是在更新发布项目需要登陆FTP会比较麻烦，可以选择为项目配置CI自动化上传发布功能，后续会出一篇关于 **GitHub+Action+FTPci**自动化发布教程。
 
-推荐[vuepress-theme-reco](https://vuepress-theme-reco.recoluan.com/),有问题邮箱咨询
+看下面图片的部分失败记录就知道我踩了多少坑....
+
+[vuepress](https://www.vuepress.cn/),有问题邮箱咨询
+
+![avatar](./img/ci.png)
+
+
+
