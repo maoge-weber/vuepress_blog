@@ -308,7 +308,7 @@ css: {
 或者在 main.ts 中引入样式文件 6.动态 class 写法
 
 ```tsx
-vue 写法
+vue 模块中写法
 
 <div :class="{active:true}"></div>
 
@@ -316,5 +316,4 @@ vue 写法
 tsx 写法  多类名写法
 
 <div class={['box',true?'active':'']}></div>
-```
 ```
