@@ -8,16 +8,16 @@
     "upcdn": "vuepress build . && node ./scripts/upcdn.js"
   },
   "devDependencies": {
-    "glob": "^7.1.6",
-    "mime": "^2.4.4",
+    "glob": "^7.2.3",
+    "mime": "^2.6.0",
     "path": "^0.12.7",
-    "qiniu": "^7.3.0",
-    "vuepress": "^1.7.1",
-    "vuepress-theme-reco": "1.5.5"
+    "qiniu": "^7.8.0",
+    "vuepress": "^1.9.9",
+    "vuepress-theme-reco": "^1.5.5"
   },
   "dependencies": {
     "aos": "^2.3.4",
-    "vue-class-component": "^7.2.3"
+    "vue-class-component": "^7.2.6"
   },
   "description": "blog for zeal"
 }
