@@ -4,7 +4,7 @@
   "author": "zeal",
   "scripts": {
     "dev": "vuepress dev .",
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider vuepress build .",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && vuepress build .",
     "upcdn": "vuepress build . && node ./scripts/upcdn.js"
   },
   "devDependencies": {
