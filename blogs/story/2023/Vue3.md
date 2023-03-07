@@ -1,6 +1,6 @@
 ---
 title: Vue3
-cover: https://pan.zealsay.com/zealsay/cover/5.jpg
+cover: https://pan.zealsay.com/zealsay/cover/1.jpg
 date: 2023-03-07
 tags:
  - Vue3+tsx

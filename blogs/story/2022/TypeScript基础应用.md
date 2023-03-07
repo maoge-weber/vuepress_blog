@@ -1,6 +1,6 @@
 ---
 title: TypeScript基础应用
-cover: https://pan.zealsay.com/zealsay/cover/5.jpg
+cover: https://pan.zealsay.com/zealsay/cover/2.jpg
 date: 2022-10-07
 tags:
  - Vue3
