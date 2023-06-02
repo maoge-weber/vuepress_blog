@@ -22,11 +22,30 @@ JavaScript内置函数<br>
 ```js
 const number = 1234567890.123;
 
-// 使用 toLocaleString() 方法对数字进行千分号操作
+// 使用 toLocaleString() 方法对
 // number需要是number类型
-const result = number.toLocaleString('en-US');
 
+// 数字进行千分号操作
+const result = number.toLocaleString('en-US');
 console.log(result); // 输出 "1,234,567,890.123"
+
+// 人民币格式
+const opts = {
+  style: 'currency',
+  currency: 'CNY',
+};
+const result = number.toLocaleString('zh-CN', opts); //  ¥111,111,111.00
+
+// 百分比格式
+const opts = {
+  style: 'percent',
+  currency: 'CNY',
+};
+(0.5).toLocaleString('zh-CN', opts); // 50%
+
+// nu 扩展字段要求编号系统，e.g. 中文十进制
+const result = number.toLocaleString('zh-Hans-CN-u-nu-hanidec');
+// → 一二三,四五六.七八九
 
 ```
 
