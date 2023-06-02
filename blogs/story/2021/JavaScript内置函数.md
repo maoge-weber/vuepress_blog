@@ -19,6 +19,8 @@ JavaScript内置函数<br>
 
 #### 	1.toLocaleString() 来对数字进行千分号操作
 
+
+
 ```js
 const number = 1234567890.123;
 
@@ -51,6 +53,8 @@ const result = number.toLocaleString('zh-Hans-CN-u-nu-hanidec');
 
 #### 	2.字符串处理函数
 
+
+
 ```js
 // toUpperCase()：将字符串转换为大写字母。
 const str = "hello world";
@@ -69,6 +73,8 @@ console.log(str.charAt(6)); // 输出 "w"
 
 #### 	3.用于格式化日期和时间
 
+
+
 ```js
 
 Intl.DateTimeFormat()
@@ -77,6 +83,8 @@ Intl.DateTimeFormat()
 
 #### 	4.返回一个字符串的模板字面量原始字符串
 
+
+
 ```js
 
 String.raw() 
@@ -84,6 +92,8 @@ String.raw()
 ```
 
 #### 	5.告诉浏览器你想要执行动画，并且在下一次重绘前调用指定的回调函数更新动画帧。
+
+
 
 ```js
 
