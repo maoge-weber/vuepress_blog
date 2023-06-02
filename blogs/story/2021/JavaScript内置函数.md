@@ -14,7 +14,7 @@ JavaScript内置函数<br>
 :::
 
 ---
-常用JavaScript内置函数集
+常用JavaScript内置函数集(持续更新..)
 ---
 
 #### 	1.toLocaleString() 来对数字进行千分号操作
