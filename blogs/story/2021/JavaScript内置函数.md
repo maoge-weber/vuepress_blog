@@ -47,3 +47,27 @@ console.log(str.charAt(0)); // 输出 "h"
 console.log(str.charAt(6)); // 输出 "w"
 
 ```
+
+#### 	3.用于格式化日期和时间
+
+```js
+
+Intl.DateTimeFormat()
+
+```
+
+#### 	4.返回一个字符串的模板字面量原始字符串
+
+```js
+
+String.raw() 
+
+```
+
+#### 	5.告诉浏览器你想要执行动画，并且在下一次重绘前调用指定的回调函数更新动画帧。
+
+```js
+
+window.requestAnimationFrame()
+
+```
