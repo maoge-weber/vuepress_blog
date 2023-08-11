@@ -1,6 +1,6 @@
 ---
 title: 2023ECMAScript更新
-cover: https://pan.zealsay.com/zealsay/cover/6.jpg
+cover: /bac8.jpg
 date: 2023-03-28
 tags:
  - 前端技术
