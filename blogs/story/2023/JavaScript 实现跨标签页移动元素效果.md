@@ -1,6 +1,6 @@
 ---
 title: JavaScript 实现跨标签页移动元素效果
-cover: https://pan.zealsay.com/zealsay/cover/2.jpg
+cover: /bac11.jpg
 date: 2023-08-08
 tags:
  - JavaScript

@@ -1,6 +1,6 @@
 ---
 title: MAC/Win安装多个版本node命令
-cover: https://pan.zealsay.com/zealsay/cover/2.jpg
+cover: /bac10.png
 date: 2023-04-03
 tags:
  - 杂物收纳
