@@ -13,7 +13,6 @@ categories:
 2023ECMAScript更新<br>
 :::
 
- ![图片](https://mmbiz.qpic.cn/mmbiz_png/EO58xpw5UMP510LL9v2pEresbCRs75xBtlgOeBwjEq9HqyXyzNz1BjcCiaLhFJI4aiciacSG1vNuSB15y2iap79mhA/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1) 
 
 #### 从尾到头搜索数组
 
@@ -133,20 +132,6 @@ Unix 的命令行脚本都支持`#!` 命令，又称为 Hashbang。这个命令�
 ```
 
 除此之外，还有了一个新的非破坏性方法：`with()`。该方法会以非破坏性的方式替换给定 index 处的数组元素，即 `arr[index]=value` 的非破坏性版本。
-
-所有这些方法都将保持目标数组不变，并返回它的副本并执行更改。这些方法适用于数组，也适用于类型化数组，即以下类的实例：
-
-- Int8Array
-- Uint8Array
-- Uint8ClampedArray
-- Int16Array
-- Uint16Array
-- Int32Array
-- Uint32Array
-- Float32Array
-- Float64Array
-- BigInt64Array
-- BigUint64Array
 
 如果我们想要这些数组方法应用于数组而不改变它，可以使用下面任意一种形式：
 
