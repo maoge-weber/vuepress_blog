@@ -1,7 +1,7 @@
 ---
 title: 聊聊我的博客
 date: 2019-08-31
-cover: https://pan.zealsay.com/mweb/blog/WechatIMG11.png
+cover: /bac8.jpg
 tags:
  - vuepress
 categories:

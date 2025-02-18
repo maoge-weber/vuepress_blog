@@ -1,6 +1,6 @@
 ---
 title:  uni-app打包成H5，与PC不适配的问题 
-cover: https://pan.zealsay.com/zealsay/cover/5.jpg
+cover: /bac10.png
 date: 2022-011-14
 tags:
  - 前端

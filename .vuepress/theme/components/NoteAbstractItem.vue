@@ -5,7 +5,7 @@
     <i v-if="item.frontmatter.sticky" class="iconfont reco-sticky"></i>
     <div class="cover">
       <img class="cover-img" :src="item.frontmatter.cover || this.$themeConfig.covers[item.title%7+1]
-      || 'https://pan.zealsay.com/zealsay/cover/1.jpg'" :alt="item.title"/>
+      || '../images/bac2.png'" :alt="item.title"/>
     </div>
     <div class="info">
       <div class="title">

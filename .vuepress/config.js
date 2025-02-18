@@ -150,13 +150,14 @@ module.exports = {
       }
     ],
     "covers": [
-      'https://pan.zealsay.com/zealsay/cover/7.jpg',
-      'https://pan.zealsay.com/zealsay/cover/1.jpg',
-      'https://pan.zealsay.com/zealsay/cover/3.jpg',
-      'https://pan.zealsay.com/zealsay/cover/3.jpg',
-      'https://pan.zealsay.com/zealsay/cover/4.jpg',
-      'https://pan.zealsay.com/zealsay/cover/5.jpg',
-      'https://pan.zealsay.com/zealsay/cover/6.jpg'
+      './public/bac1.jpg',
+      './public/bac2.png',
+      './public/bac3.png',
+      './public/bac5.jpg',
+      './public/bac1.jpg',
+      './public/bac2.png',
+      './public/bac3.png',
+      './public/bac11.jpg',
     ],
     "codeTheme": "tomorrow"
   },
@@ -167,7 +168,7 @@ module.exports = {
   //   if (!isServer) {
   //     // 修改客户端的 webpack 配置
   //     config.output.publicPath = config.mode === 'production'
-  //       ? 'https://pan.zealsay.com/blog/' // sample/essays 打包的默认路径为 ‘_nuxt’ 或者可以指定cdn 域名
+  //       ? 'https://pan.zealsay.com/blog/' // sample/essays 打包的默认路径为 ''_nuxt' 或者可以指定cdn 域名
   //       : '/';
   //     config.output.filename = "assets/js/[name].js";
   //   }

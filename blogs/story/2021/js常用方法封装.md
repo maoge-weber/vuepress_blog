@@ -1,6 +1,6 @@
 ---
 title: 常用JavaScript方法封装
-cover: https://pan.zealsay.com/zealsay/cover/5.jpg
+cover: /bac8.jpg
 date: 2021-09-12
 tags:
  - JS

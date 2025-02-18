@@ -13,7 +13,6 @@
       </transition>
       <div :class="{ 'hide': firstLoad || !isHasKey }">
         <div v-if="all" class="wrapper-main" :style="{
-          backgroundImage: 'url('+cover+')',
           backgroundPositionX: 'center',
           backgroundPositionY: 'center',
           backgroundSize: 'cover',
@@ -46,8 +45,8 @@
           </div>
         </div>
         <div v-else>
+          <!-- backgroundImage: 'url('+pageCover+')', -->
           <div class="wrapper-page" :id="all?'smart1':'smart'" :style="{
-          backgroundImage: 'url('+pageCover+')',
           backgroundPositionX: 'center',
           backgroundPositionY: 'center',
           backgroundSize: 'cover',
@@ -332,11 +331,13 @@
   }
 
   .wrapper-main {
+    background:url('../images/bac8.jpg') center center / cover no-repeat;
     // background: url("https://pan.zealsay.com/zealsay/cover/1.jpg") center center / cover no-repeat
     height 100vh
   }
 
   .wrapper-page {
+    background:url('../images/bac8.jpg') center center / cover no-repeat;
     //background: url("https://pan.zealsay.com/zealsay/cover/1.jpg") center center / cover no-repeat
     height 28rem
     position relative

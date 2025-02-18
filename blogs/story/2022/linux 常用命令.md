@@ -1,6 +1,6 @@
 ---
 title: linux 常用命令
-cover: https://pan.zealsay.com/zealsay/cover/4.jpg
+cover: /bac9.png
 date: 2023-04-03
 tags:
  - 杂物收纳

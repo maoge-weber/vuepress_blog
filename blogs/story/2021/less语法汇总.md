@@ -1,6 +1,6 @@
 ---
 title: less语法汇总
-cover: https://pan.zealsay.com/zealsay/cover/3.jpg
+cover: /bac8.jpg
 date: 2021-10-27
 tags:
  - css

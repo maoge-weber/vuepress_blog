@@ -1,6 +1,6 @@
 ---
 title: Vue3搭建组件库教程
-cover: https://pan.zealsay.com/zealsay/cover/2.jpg
+cover: /bac11.jpg
 date: 2022-05-01
 tags:
  - Vue3

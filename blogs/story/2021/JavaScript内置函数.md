@@ -1,6 +1,6 @@
 ---
 title: JavaScript内置函数
-cover: https://pan.zealsay.com/zealsay/cover/3.jpg
+cover: /bac8.jpg
 date: 2021-08-10
 tags:
  - 前端技术

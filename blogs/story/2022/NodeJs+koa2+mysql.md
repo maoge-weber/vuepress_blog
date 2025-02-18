@@ -1,6 +1,6 @@
 ---
 title: NodeJs+koa2+mysql
-cover: https://pan.zealsay.com/zealsay/cover/5.jpg
+cover: /bac8.jpg
 date: 2022-11-16
 tags:
  - NodeJs

@@ -1,7 +1,7 @@
 ---
 title: 数组排序.去重
 date: 2019-12-20
-cover: https://pan.zealsay.com/mweb/blog/WechatIMG5.png
+cover: /bac8.jpg
 tags:
  - JS
  - vue
