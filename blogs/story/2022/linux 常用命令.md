@@ -1,6 +1,6 @@
 ---
 title: linux 常用命令
-cover: /bac9.png
+cover: /bac5.png
 date: 2023-04-03
 tags:
  - 杂物收纳

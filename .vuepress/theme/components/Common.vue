@@ -160,6 +160,7 @@
         return this.$themeConfig.keyPage && this.$themeConfig.keyPage.absoluteEncryption === true
       },
       cover() {
+        console.log('this.$themeConfig.covers---->',this.$themeConfig.covers);
         return this.$themeConfig.covers[new Date().getDay()] || "https://pan.zealsay.com/zealsay/cover/1.jpg"
       },
       pageCover() {

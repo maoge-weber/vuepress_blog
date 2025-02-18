@@ -1,6 +1,6 @@
 ---
 title: 不要直接使用git pull拉取代码
-cover: /bac9.png
+cover: /bac6.jpg
 date: 2024-07-16
 tags:
  - git
