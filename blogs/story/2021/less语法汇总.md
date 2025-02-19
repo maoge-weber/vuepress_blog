@@ -1,6 +1,6 @@
 ---
 title: less语法汇总
-cover: /bac8.jpg
+cover: /bac7.jpg
 date: 2021-10-27
 tags:
  - css
