@@ -150,7 +150,7 @@ module.exports = {
       }
     ],
     "covers": [
-      './public/bac1.jpg',
+      './public/bac1.png',
       './public/bac2.png',
       './public/bac3.png',
       './public/bac4.jpg',
