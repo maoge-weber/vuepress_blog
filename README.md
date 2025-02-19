@@ -58,7 +58,7 @@ features:
             c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)
         }
         var l = "喜欢什么就去做吧！",
-            o = ["后端开发", "极简化", "写博客", "去看海", "户外运动", "摄影"].map(function (r) {
+            o = ["前端开发", "极简化", "写博客", "去看海", "户外运动", "摄影"].map(function (r) {
                 return r + "."
             }),
             a = 2,
