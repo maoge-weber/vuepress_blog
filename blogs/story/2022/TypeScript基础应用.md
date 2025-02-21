@@ -37,6 +37,7 @@ name = 'jack'
 let age:number = 12
 const info = `My name is ${name}, I am ${age} years old!`
 
+
 //undefined 和 null
 let u: undefined = undefined
 let n: null = null
