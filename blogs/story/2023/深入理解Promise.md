@@ -1,6 +1,6 @@
 ---
 title: 深入理解 Promise
-date: 2024-07-23
+date: 2023-07-23
 cover: /bac4.jpg
 tags:
  - JavaScript
