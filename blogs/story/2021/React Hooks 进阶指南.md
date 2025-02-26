@@ -1,7 +1,7 @@
 ---
 title: React Hooks 进阶指南
 date: 2021-05-18
-cover: /bac5.jpg
+cover: /bac5.png
 tags:
  - React
  - 前端
