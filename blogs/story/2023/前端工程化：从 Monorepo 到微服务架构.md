@@ -21,6 +21,7 @@ categories:
 ### 1.1 使用 pnpm + workspace
 
 ```json
+
 {
   "name": "my-monorepo",
   "private": true,
