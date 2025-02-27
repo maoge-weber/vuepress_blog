@@ -1,7 +1,7 @@
 ---
 title: Vue3 组件通信最佳实践
 date: 2021-03-15
-cover: /bac1.png
+cover: /bac1.jpg
 tags:
  - Vue3
  - 前端
