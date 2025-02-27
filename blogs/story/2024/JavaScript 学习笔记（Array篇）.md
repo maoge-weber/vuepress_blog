@@ -70,7 +70,7 @@ Array.isArray(arr);
 Object.getPrototypeof(arr) === Array.prototype;
 Object.prototype.toString.call(arr) === '[object Array]'
 ```
-其他
+其他特殊的
  ```javascript
 array.concat(data);    // 数组拼接
 array.join('-');    // 用 - 分割数组，将数组转换成字符串
@@ -84,4 +84,29 @@ array3 = [...array1, ...array2];    //数组拼接
 array.forEach(function (el, index) {
     console.log('第' + index + '个元素是：' + el);
 });
+```
+
+数组去重
+```JS
+//1.Set()
+const arr = [1, 2, 2, 3, 4, 4, 5];
+const uniqueArr = [...new Set(arr)];
+console.log(uniqueArr);  // 输出：[1, 2, 3, 4, 5]
+
+//2.reduce()/forEach() 将数值push到一个新数组
+const arr = [1, 2, 2, 3, 4, 4, 5];
+const uniqueArr = arr.reduce((acc, value) => {
+  if (!acc.includes(value)) {
+    acc.push(value);
+  }
+  return acc;
+}, []);
+console.log(uniqueArr);  // 输出：[1, 2, 3, 4, 5]
+
+//3.filter()/indexOf()
+const arr = [1, 2, 2, 3, 4, 4, 5];
+const uniqueArr = arr.filter((value, index, self) => self.indexOf(value) === index);
+console.log(uniqueArr);  // 输出：[1, 2, 3, 4, 5]
+
+
 ```
