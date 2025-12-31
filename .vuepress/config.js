@@ -41,6 +41,11 @@ module.exports = {
         "icon": "reco-home"
       },
       {
+        "text": "学习统计",
+        "link": "/study-stats/",
+        "icon": "reco-date"
+      },
+      {
         "text": "时间轴",
         "link": "/timeline/",
         "icon": "reco-date"
