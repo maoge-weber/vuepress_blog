@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "author": "zeal",
   "scripts": {
-    "dev": "vuepress dev .",
-    "build": "vuepress build .",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider vuepress dev .",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider vuepress build .",
     "upcdn": "vuepress build . && node ./scripts/upcdn.js"
   },
   "devDependencies": {
