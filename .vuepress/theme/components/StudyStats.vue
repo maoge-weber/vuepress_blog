@@ -63,8 +63,6 @@
 </template>
 
 <script>
-import Chart from 'chart.js'
-
 export default {
   name: 'StudyStats',
   data() {
@@ -97,11 +95,12 @@ export default {
     }
   },
   mounted() {
-    this.loadHistory()
-    // 确保DOM渲染完成后再初始化图表
-    this.$nextTick(() => {
-      this.initChart()
-    })
+    if (typeof window !== 'undefined') {
+      this.loadHistory()
+      this.$nextTick(() => {
+        this.initChart()
+      })
+    }
   },
   beforeDestroy() {
     if (this.timerInterval) {
@@ -157,132 +156,140 @@ export default {
     },
     
     saveHistory() {
-      localStorage.setItem('studyStatsHistory', JSON.stringify(this.history))
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('studyStatsHistory', JSON.stringify(this.history))
+      }
     },
     
     loadHistory() {
-      const saved = localStorage.getItem('studyStatsHistory')
-      if (saved) {
-        this.history = JSON.parse(saved)
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('studyStatsHistory')
+        if (saved) {
+          this.history = JSON.parse(saved)
+        }
       }
     },
     
     initChart() {
-      if (!this.$refs.statsChart) return
+      if (typeof window === 'undefined' || !this.$refs.statsChart) return
       
-      const ctx = this.$refs.statsChart.getContext('2d')
-      this.chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: this.history.map((_, index) => `记录 ${index + 1}`),
-          datasets: [
-            {
-              label: '时间 (秒)',
-              data: this.history.map(record => record.time),
-              borderColor: '#00ffff',
-              backgroundColor: 'rgba(0, 255, 255, 0.1)',
-              yAxisID: 'y-axis-0',
-              tension: 0.3,
-              pointBackgroundColor: '#00ffff',
-              pointBorderColor: '#00ffff',
-              pointHoverBackgroundColor: '#ffffff',
-              pointHoverBorderColor: '#00ffff'
-            },
-            {
-              label: '正确率 (%)',
-              data: this.history.map(record => record.accuracy),
-              borderColor: '#00ff00',
-              backgroundColor: 'rgba(0, 255, 0, 0.1)',
-              yAxisID: 'y-axis-1',
-              tension: 0.3,
-              pointBackgroundColor: '#00ff00',
-              pointBorderColor: '#00ff00',
-              pointHoverBackgroundColor: '#ffffff',
-              pointHoverBorderColor: '#00ff00'
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            yAxes: [
+      import('chart.js').then(Chart => {
+        const ctx = this.$refs.statsChart.getContext('2d')
+        this.chart = new Chart.default(ctx, {
+          type: 'line',
+          data: {
+            labels: this.history.map((_, index) => `记录 ${index + 1}`),
+            datasets: [
               {
-                id: 'y-axis-0',
-                type: 'linear',
-                display: true,
-                position: 'left',
-                scaleLabel: {
-                  display: true,
-                  labelString: '时间 (秒)',
-                  fontColor: '#00ffff'
-                },
-                gridLines: {
-                  color: 'rgba(0, 255, 255, 0.1)',
-                  drawBorder: true,
-                  borderColor: '#00ffff'
-                },
-                ticks: {
-                  fontColor: '#00ffff'
-                }
+                label: '时间 (秒)',
+                data: this.history.map(record => record.time),
+                borderColor: '#00ffff',
+                backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                yAxisID: 'y-axis-0',
+                tension: 0.3,
+                pointBackgroundColor: '#00ffff',
+                pointBorderColor: '#00ffff',
+                pointHoverBackgroundColor: '#ffffff',
+                pointHoverBorderColor: '#00ffff'
               },
               {
-                id: 'y-axis-1',
-                type: 'linear',
-                display: true,
-                position: 'right',
-                scaleLabel: {
-                  display: true,
-                  labelString: '正确率 (%)',
-                  fontColor: '#00ff00'
-                },
-                min: 0,
-                max: 100,
-                gridLines: {
-                  drawOnChartArea: false
-                },
-                ticks: {
-                  fontColor: '#00ff00'
-                }
-              }
-            ],
-            xAxes: [
-              {
-                scaleLabel: {
-                  display: true,
-                  labelString: '记录次数',
-                  fontColor: '#ffffff'
-                },
-                gridLines: {
-                  color: 'rgba(255, 255, 255, 0.1)',
-                  drawBorder: true,
-                  borderColor: '#ffffff'
-                },
-                ticks: {
-                  fontColor: '#ffffff'
-                }
+                label: '正确率 (%)',
+                data: this.history.map(record => record.accuracy),
+                borderColor: '#00ff00',
+                backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                yAxisID: 'y-axis-1',
+                tension: 0.3,
+                pointBackgroundColor: '#00ff00',
+                pointBorderColor: '#00ff00',
+                pointHoverBackgroundColor: '#ffffff',
+                pointHoverBorderColor: '#00ff00'
               }
             ]
           },
-          title: {
-            display: true,
-            text: '学习统计趋势',
-            fontColor: '#ffffff',
-            fontSize: 18
-          },
-          legend: {
-            position: 'top',
-            labels: {
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              yAxes: [
+                {
+                  id: 'y-axis-0',
+                  type: 'linear',
+                  display: true,
+                  position: 'left',
+                  scaleLabel: {
+                    display: true,
+                    labelString: '时间 (秒)',
+                    fontColor: '#00ffff'
+                  },
+                  gridLines: {
+                    color: 'rgba(0, 255, 255, 0.1)',
+                    drawBorder: true,
+                    borderColor: '#00ffff'
+                  },
+                  ticks: {
+                    fontColor: '#00ffff'
+                  }
+                },
+                {
+                  id: 'y-axis-1',
+                  type: 'linear',
+                  display: true,
+                  position: 'right',
+                  scaleLabel: {
+                    display: true,
+                    labelString: '正确率 (%)',
+                    fontColor: '#00ff00'
+                  },
+                  min: 0,
+                  max: 100,
+                  gridLines: {
+                    drawOnChartArea: false
+                  },
+                  ticks: {
+                    fontColor: '#00ff00'
+                  }
+                }
+              ],
+              xAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: '记录次数',
+                    fontColor: '#ffffff'
+                  },
+                  gridLines: {
+                    color: 'rgba(255, 255, 255, 0.1)',
+                    drawBorder: true,
+                    borderColor: '#ffffff'
+                  },
+                  ticks: {
+                    fontColor: '#ffffff'
+                  }
+                }
+              ]
+            },
+            title: {
+              display: true,
+              text: '学习统计趋势',
               fontColor: '#ffffff',
-              boxWidth: 10,
-              padding: 15
+              fontSize: 18
+            },
+            legend: {
+              position: 'top',
+              labels: {
+                fontColor: '#ffffff',
+                boxWidth: 10,
+                padding: 15
+              }
+            },
+            animation: {
+              duration: 1000,
+              easing: 'easeInOutQuart'
             }
-          },
-          animation: {
-            duration: 1000,
-            easing: 'easeInOutQuart'
           }
-        }
+        })
+      }).catch(err => {
+        console.error('Failed to load Chart.js:', err)
       })
     },
     

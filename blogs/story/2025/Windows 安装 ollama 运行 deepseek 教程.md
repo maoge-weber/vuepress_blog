@@ -10,7 +10,7 @@ categories:
 
 ---
 ::: tip 介绍
-Windows 环境下安装 ollama，下载 deepseek-r1 模型，并对接 chatbox UI 部署本地AI服务。<br>
+Windows 环境下安装 ollama，下载 deepseek-r1 模型，并对接 chatbox UI 部署本地AI服务。此为学习搭建<br>
 :::
 
  
