@@ -43,7 +43,9 @@
           <div v-for="(record, index) in history" :key="index" class="history-item">
             <div class="history-info">
               <span class="history-date">{{ record.date }}</span>
-              <span class="history-time">时间: {{ record.time }}s</span>
+              <span class="history-time">时间: {{ (record.time / 60).toFixed(1) }}分钟</span>
+              <span class="history-questions">答题: {{ record.totalQuestions }}题</span>
+              <span class="history-wrong">错误: {{ record.wrongQuestions }}题</span>
               <span class="history-accuracy">正确率: {{ record.accuracy }}%</span>
             </div>
             <button @click="deleteRecord(index)" class="btn btn-small btn-danger">删除</button>
@@ -178,11 +180,11 @@ export default {
         this.chart = new Chart.default(ctx, {
           type: 'line',
           data: {
-            labels: this.history.map((_, index) => `记录 ${index + 1}`),
+            labels: this.history.map(record => record.date.split(' ')[1] || record.date),
             datasets: [
               {
-                label: '时间 (秒)',
-                data: this.history.map(record => record.time),
+                label: '时间 (分钟)',
+                data: this.history.map(record => parseFloat((record.time / 60).toFixed(1))),
                 borderColor: '#00ffff',
                 backgroundColor: 'rgba(0, 255, 255, 0.1)',
                 yAxisID: 'y-axis-0',
@@ -218,7 +220,7 @@ export default {
                   position: 'left',
                   scaleLabel: {
                     display: true,
-                    labelString: '时间 (秒)',
+                    labelString: '时间 (分钟)',
                     fontColor: '#00ffff'
                   },
                   gridLines: {
@@ -254,7 +256,7 @@ export default {
                 {
                   scaleLabel: {
                     display: true,
-                    labelString: '记录次数',
+                    labelString: '时间',
                     fontColor: '#ffffff'
                   },
                   gridLines: {
@@ -299,8 +301,8 @@ export default {
         return
       }
       
-      const labels = this.history.map((_, index) => `记录 ${index + 1}`)
-      const times = this.history.map(record => record.time)
+      const labels = this.history.map(record => record.date.split(' ')[1] || record.date)
+      const times = this.history.map(record => parseFloat((record.time / 60).toFixed(1)))
       const accuracies = this.history.map(record => record.accuracy)
       
       this.chart.data.labels = labels
@@ -586,6 +588,22 @@ label {
   padding: 5px 10px;
   border-radius: 4px;
   border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.history-questions {
+  color: #ffff00;
+  background: rgba(255, 255, 0, 0.1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 0, 0.3);
+}
+
+.history-wrong {
+  color: #ff00ff;
+  background: rgba(255, 0, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 0, 255, 0.3);
 }
 
 .history-accuracy {
