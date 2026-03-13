@@ -177,34 +177,40 @@ export default {
       
       import('chart.js').then(Chart => {
         const ctx = this.$refs.statsChart.getContext('2d')
+        const recordCount = this.history.length;
+        const barWidth = recordCount < 10 ? 0.1 : 0.6;
+        const categoryWidth = recordCount < 10 ? 0.1 : 0.8;
+        
         this.chart = new Chart.default(ctx, {
-          type: 'line',
+          type: 'bar',
           data: {
-            labels: this.history.map(record => record.date.split(' ')[1] || record.date),
+            labels: this.history.map(record => {
+              const date = new Date(record.date);
+              return `${(date.getFullYear() % 100).toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+            }),
             datasets: [
+              {
+                label: '正确率 (%)',
+                data: this.history.map(record => record.accuracy),
+                backgroundColor: 'rgba(0, 255, 0, 0.7)',
+                borderColor: '#00ff00',
+                borderWidth: 1,
+                yAxisID: 'y-axis-1',
+                barPercentage: barWidth,
+                categoryPercentage: categoryWidth,
+              },
               {
                 label: '时间 (分钟)',
                 data: this.history.map(record => parseFloat((record.time / 60).toFixed(1))),
                 borderColor: '#00ffff',
                 backgroundColor: 'rgba(0, 255, 255, 0.1)',
                 yAxisID: 'y-axis-0',
+                type: 'line',
                 tension: 0.3,
                 pointBackgroundColor: '#00ffff',
                 pointBorderColor: '#00ffff',
                 pointHoverBackgroundColor: '#ffffff',
                 pointHoverBorderColor: '#00ffff'
-              },
-              {
-                label: '正确率 (%)',
-                data: this.history.map(record => record.accuracy),
-                borderColor: '#00ff00',
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                yAxisID: 'y-axis-1',
-                tension: 0.3,
-                pointBackgroundColor: '#00ff00',
-                pointBorderColor: '#00ff00',
-                pointHoverBackgroundColor: '#ffffff',
-                pointHoverBorderColor: '#00ff00'
               }
             ]
           },
@@ -256,7 +262,7 @@ export default {
                 {
                   scaleLabel: {
                     display: true,
-                    labelString: '时间',
+                    labelString: '日期',
                     fontColor: '#ffffff'
                   },
                   gridLines: {
@@ -265,7 +271,9 @@ export default {
                     borderColor: '#ffffff'
                   },
                   ticks: {
-                    fontColor: '#ffffff'
+                    fontColor: '#ffffff',
+                    maxRotation: 45,
+                    minRotation: 45
                   }
                 }
               ]
@@ -301,13 +309,22 @@ export default {
         return
       }
       
-      const labels = this.history.map(record => record.date.split(' ')[1] || record.date)
-      const times = this.history.map(record => parseFloat((record.time / 60).toFixed(1)))
+      const recordCount = this.history.length;
+      const barWidth = recordCount < 10 ? 0.1 : 0.6;
+      const categoryWidth = recordCount < 10 ? 0.1 : 0.8;
+      
+      const labels = this.history.map(record => {
+        const date = new Date(record.date);
+        return `${(date.getFullYear() % 100).toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
+      })
       const accuracies = this.history.map(record => record.accuracy)
+      const times = this.history.map(record => parseFloat((record.time / 60).toFixed(1)))
       
       this.chart.data.labels = labels
-      this.chart.data.datasets[0].data = times
-      this.chart.data.datasets[1].data = accuracies
+      this.chart.data.datasets[0].data = accuracies
+      this.chart.data.datasets[0].barPercentage = barWidth
+      this.chart.data.datasets[0].categoryPercentage = categoryWidth
+      this.chart.data.datasets[1].data = times
       this.chart.update()
     }
   }
@@ -513,7 +530,7 @@ label {
 
 /* 历史记录样式 */
 .history-container {
-  max-height: 350px;
+  max-height: 500px;
   overflow-y: auto;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 8px;
