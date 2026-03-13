@@ -110,7 +110,7 @@ module.exports = {
     "lastUpdated": false,
     "author": "猫哥",
     "authorAvatar": "/logo.png",
-    "record":'豫ICP备2025113267号', //icp备案
+    "record":'豫ICP备2026009043', //icp备案
     "startYear": "2017",
     "info": "一名被迫搬砖的IT民工/建造师/公路工程师/摄影狗，一只前端开发。",
     "socials":{
