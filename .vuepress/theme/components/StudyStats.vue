@@ -1,145 +1,188 @@
 <template>
   <div class="study-stats-container">
-    <h1>学习统计</h1>
-    
-    <!-- 双计时器并排布局 -->
-    <div class="dual-timer-container">
-      <!-- 答题计时器 -->
-      <div class="stats-section timer-section">
-        <h2>答题计时</h2>
-        <div class="timer-container">
-          <div class="timer-display">{{ formattedTime }}</div>
-          <div class="timer-buttons">
-            <button @click="startTimer" v-if="!isRunning" class="btn btn-primary">开始</button>
-            <button @click="stopTimer" v-else class="btn btn-danger">停止</button>
+    <!-- 登录表单 -->
+    <div v-if="!isLoggedIn" class="login-container">
+      <div class="login-card">
+        <h1>学习统计</h1>
+        <div class="login-form">
+          <div class="form-item">
+            <label>用户名</label>
+            <input type="text" v-model="username" class="input" placeholder="请输入用户名">
+          </div>
+          <div class="form-item">
+            <label>密码</label>
+            <input type="password" v-model="password" class="input" placeholder="请输入密码">
+          </div>
+          <button @click="handleLogin" class="btn btn-primary login-btn" :disabled="!username || !password">
+            {{ isLoggingIn ? '登录中...' : '登录' }}
+          </button>
+          <div v-if="loginError" class="error-message">{{ loginError }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学习统计页面 -->
+    <template v-else>
+      <div class="header-bar">
+        <h1>学习统计</h1>
+        <button @click="handleLogout" class="btn btn-danger logout-btn">退出登录</button>
+      </div>
+
+      <!-- 双计时器并排布局 -->
+      <div class="dual-timer-container">
+        <!-- 答题计时器 -->
+        <div class="stats-section timer-section">
+          <h2>答题计时</h2>
+          <div class="timer-container">
+            <div class="timer-display">{{ formattedTime }}</div>
+            <div class="timer-buttons">
+              <button @click="startTimer" v-if="!isRunning" class="btn btn-primary">开始</button>
+              <button @click="stopTimer" v-else class="btn btn-danger">停止</button>
+            </div>
+          </div>
+          <div class="form-container">
+            <div class="form-item">
+              <label>总题数:</label>
+              <input type="number" v-model.number="totalQuestions" min="0" class="input">
+            </div>
+            <div class="form-item">
+              <label>错误题数:</label>
+              <input type="number" v-model.number="wrongQuestions" min="0" max="totalQuestions" class="input">
+            </div>
+            <div class="form-item">
+              <label>正确率:</label>
+              <div class="accuracy-display">{{ formattedAccuracy }}%</div>
+            </div>
+            <button @click="saveRecord" class="btn btn-success" :disabled="!canSave">保存记录</button>
           </div>
         </div>
-        <div class="form-container">
-          <div class="form-item">
-            <label>总题数:</label>
-            <input type="number" v-model.number="totalQuestions" min="0" class="input">
+        
+        <!-- 学习时间计时器 -->
+        <div class="stats-section timer-section">
+          <h2>学习时间</h2>
+          <div class="timer-container">
+            <div class="timer-display study-timer">{{ formattedStudyTime }}</div>
+            <div class="timer-buttons">
+              <button @click="startStudyTimer" v-if="!isStudyRunning" class="btn btn-primary">开始</button>
+              <button @click="stopStudyTimer" v-else class="btn btn-danger">停止</button>
+            </div>
           </div>
-          <div class="form-item">
-            <label>错误题数:</label>
-            <input type="number" v-model.number="wrongQuestions" min="0" max="totalQuestions" class="input">
+          <div class="study-time-info">
+            <div class="info-item">
+              <span class="info-label">本次学习:</span>
+              <span class="info-value">{{ formattedStudyTime }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">累计学习:</span>
+              <span class="info-value">{{ formattedTotalTime }}</span>
+            </div>
           </div>
-          <div class="form-item">
-            <label>正确率:</label>
-            <div class="accuracy-display">{{ formattedAccuracy }}%</div>
-          </div>
-          <button @click="saveRecord" class="btn btn-success" :disabled="!canSave">保存记录</button>
         </div>
       </div>
       
-      <!-- 学习时间计时器 -->
-      <div class="stats-section timer-section">
-        <h2>学习时间</h2>
-        <div class="timer-container">
-          <div class="timer-display study-timer">{{ formattedStudyTime }}</div>
-          <div class="timer-buttons">
-            <button @click="startStudyTimer" v-if="!isStudyRunning" class="btn btn-primary">开始</button>
-            <button @click="stopStudyTimer" v-else class="btn btn-danger">停止</button>
-          </div>
-        </div>
-        <div class="study-time-info">
-          <div class="info-item">
-            <span class="info-label">本次学习:</span>
-            <span class="info-value">{{ formattedStudyTime }}</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">累计学习:</span>
-            <span class="info-value">{{ formattedTotalTime }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 历史记录 -->
-    <div class="stats-section">
-      <h2>历史记录</h2>
-      <div class="history-container">
-        <div v-if="history.length === 0" class="empty-history">暂无历史记录</div>
-        <div v-else class="history-list">
-          <div v-for="(record, index) in history" :key="index" class="history-item" :class="{ 'study-time-record': record.isStudyTime }">
-            <div class="history-info">
-              <span class="history-date">{{ record.date }}</span>
-              <span class="history-time">时间: {{ (record.time / 60).toFixed(1) }}分钟</span>
-              <span v-if="record.isStudyTime" class="history-study-tag">学习时间</span>
-              <span v-else>
-                <span class="history-questions">答题: {{ record.totalQuestions }}题</span>
-                <span class="history-wrong">错误: {{ record.wrongQuestions }}题</span>
+      <!-- 答题历史记录 -->
+      <div class="stats-section">
+        <h2>答题记录</h2>
+        <div class="history-container">
+          <div v-if="answerHistory.length === 0" class="empty-history">暂无答题记录</div>
+          <div v-else class="history-list">
+            <div v-for="(record, index) in answerHistory" :key="record.id || index" class="history-item">
+              <div class="history-info">
+                <span class="history-date">{{ formatDate(record.study_time) }}</span>
+                <span class="history-time">用时: {{ record.study_minutes.toFixed(1) }}分钟</span>
+                <span class="history-questions">答题: {{ record.total_questions }}题</span>
+                <span class="history-wrong">错误: {{ record.wrong_questions }}题</span>
                 <span class="history-accuracy">正确率: {{ record.accuracy }}%</span>
-              </span>
+              </div>
+              <button @click="deleteAnswerRecord(index)" class="btn btn-small btn-danger">删除</button>
             </div>
-            <button @click="deleteRecord(index)" class="btn btn-small btn-danger">删除</button>
           </div>
         </div>
       </div>
-    </div>
-    
-    <!-- 统计图表 -->
-    <div class="stats-section">
-      <h2>学习趋势</h2>
-      <div class="chart-container">
-        <canvas ref="statsChart"></canvas>
-      </div>
-    </div>
-    
-    <!-- 学习时间统计 -->
-    <div class="stats-section">
-      <h2>学习时间统计</h2>
-      <div class="overall-stats-container">
-        <div class="stat-card">
-          <div class="stat-label">总学习次数</div>
-          <div class="stat-value total-count">{{ totalStudyCount }}次</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">总学习时间</div>
-          <div class="stat-value total-time">{{ formattedTotalTime }}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">平均学习时间</div>
-          <div class="stat-value avg-time">{{ formattedAvgTime }}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">最长学习时间</div>
-          <div class="stat-value max-time">{{ formattedMaxTime }}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">最短学习时间</div>
-          <div class="stat-value min-time">{{ formattedMinTime }}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">累计答题数</div>
-          <div class="stat-value total-questions">{{ totalQuestionsCount }}题</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">累计错误数</div>
-          <div class="stat-value total-wrong">{{ totalWrongCount }}题</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">总体正确率</div>
-          <div class="stat-value overall-accuracy">{{ formattedOverallAccuracy }}%</div>
-        </div>
-      </div>
-      <div class="progress-section">
-        <h3>学习进度</h3>
-        <div class="progress-bar-container">
-          <div class="progress-info">
-            <span>学习目标: {{ studyGoal }}小时</span>
-            <span>已完成: {{ formattedTotalHours }}小时</span>
+      
+      <!-- 学习时间记录 -->
+      <div class="stats-section">
+        <h2>学习时间记录</h2>
+        <div class="history-container">
+          <div v-if="studyTimeHistory.length === 0" class="empty-history">暂无学习时间记录</div>
+          <div v-else class="history-list">
+            <div v-for="(record, index) in studyTimeHistory" :key="record.id || index" class="history-item study-time-record">
+              <div class="history-info">
+                <span class="history-date">{{ formatDate(record.study_time) }}</span>
+                <span class="history-time">时长: {{ record.study_minutes.toFixed(1) }}分钟</span>
+                <span class="history-study-tag">纯学习时间</span>
+              </div>
+              <button @click="deleteStudyTimeRecord(index)" class="btn btn-small btn-danger">删除</button>
+            </div>
           </div>
-          <div class="progress-bar">
-            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
-          </div>
-          <div class="progress-percentage">{{ progressPercentage.toFixed(1) }}%</div>
-        </div>
-        <div class="goal-setting">
-          <label>设置学习目标(小时):</label>
-          <input type="number" v-model.number="studyGoal" min="1" class="input goal-input" @change="saveStudyGoal">
         </div>
       </div>
-    </div>
+      
+      <!-- 统计图表 -->
+      <div class="stats-section">
+        <h2>学习趋势</h2>
+        <div class="chart-container">
+          <canvas ref="statsChart"></canvas>
+        </div>
+      </div>
+      
+      <!-- 学习时间统计 -->
+      <div class="stats-section">
+        <h2>学习时间统计</h2>
+        <div class="overall-stats-container">
+          <div class="stat-card">
+            <div class="stat-label">总学习次数</div>
+            <div class="stat-value total-count">{{ studyStats.total_study_times || totalStudyCount }}次</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">总学习时间</div>
+            <div class="stat-value total-time">{{ formattedTotalTime }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">平均学习时间</div>
+            <div class="stat-value avg-time">{{ studyStats.avg_study_minutes ? formatMinutes(studyStats.avg_study_minutes) : formattedAvgTime }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">最长学习时间</div>
+            <div class="stat-value max-time">{{ formattedMaxTime }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">最短学习时间</div>
+            <div class="stat-value min-time">{{ formattedMinTime }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">累计答题数</div>
+            <div class="stat-value total-questions">{{ studyStats.total_questions || totalQuestionsCount }}题</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">累计错误数</div>
+            <div class="stat-value total-wrong">{{ studyStats.total_wrong || totalWrongCount }}题</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">总体正确率</div>
+            <div class="stat-value overall-accuracy">{{ studyStats.total_accuracy || formattedOverallAccuracy }}%</div>
+          </div>
+        </div>
+        <div class="progress-section">
+          <h3>学习进度</h3>
+          <div class="progress-bar-container">
+            <div class="progress-info">
+              <span>学习目标: {{ studyStats.target_hours || studyGoal }}小时</span>
+              <span>已完成: {{ formattedTotalHours }}小时</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+            </div>
+            <div class="progress-percentage">{{ progressPercentage.toFixed(1) }}%</div>
+          </div>
+          <div class="goal-setting">
+            <label>设置学习目标(小时):</label>
+            <input type="number" v-model.number="studyGoal" min="1" class="input goal-input">
+            <button @click="updateStudyGoal" class="btn btn-primary goal-save-btn">保存</button>
+          </div>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -148,6 +191,13 @@ export default {
   name: 'StudyStats',
   data() {
     return {
+      // 登录状态
+      isLoggedIn: false,
+      isLoggingIn: false,
+      username: '',
+      password: '',
+      loginError: '',
+      
       // 答题计时器
       isRunning: false,
       startTime: null,
@@ -155,14 +205,33 @@ export default {
       timerInterval: null,
       totalQuestions: 0,
       wrongQuestions: 0,
-      history: [],
+      answerHistory: [],
+      studyTimeHistory: [],
       chart: null,
       studyGoal: 100,
+      
       // 学习时间计时器
       isStudyRunning: false,
       studyStartTime: null,
       studyElapsedTime: 0,
-      studyTimerInterval: null
+      studyTimerInterval: null,
+      
+      // 后台统计数据
+      studyStats: {
+        total_study_times: 0,
+        total_study_minutes: 0,
+        avg_study_minutes: 0,
+        max_study_minutes: 0,
+        min_study_minutes: 0,
+        total_questions: 0,
+        total_correct: 0,
+        total_wrong: 0,
+        total_accuracy: 0,
+        target_hours: 100
+      },
+      
+      // API基础地址
+      apiBase: 'http://localhost:3000/api'
     }
   },
   computed: {
@@ -187,82 +256,150 @@ export default {
       const seconds = this.studyElapsedTime % 60
       return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
     },
+    // 学习时间统计相关
+    studyTimeTotalMinutes() {
+      return this.studyTimeHistory.reduce((sum, record) => sum + record.study_minutes, 0)
+    },
     totalStudyCount() {
-      return this.history.length
-    },
-    totalTimeInSeconds() {
-      return this.history.reduce((sum, record) => sum + record.time, 0)
-    },
-    totalTimeInMinutes() {
-      return this.totalTimeInSeconds / 60
-    },
-    totalTimeInHours() {
-      return this.totalTimeInMinutes / 60
+      return this.studyTimeHistory.length
     },
     formattedTotalTime() {
-      const hours = Math.floor(this.totalTimeInMinutes / 60)
-      const minutes = Math.floor(this.totalTimeInMinutes % 60)
+      const totalMinutes = this.studyStats.total_study_minutes || this.studyTimeTotalMinutes
+      const hours = Math.floor(totalMinutes / 60)
+      const minutes = Math.floor(totalMinutes % 60)
       return `${hours}小时${minutes}分钟`
     },
     formattedTotalHours() {
-      return this.totalTimeInHours.toFixed(2)
-    },
-    avgTimeInMinutes() {
-      if (this.history.length === 0) return 0
-      return this.totalTimeInMinutes / this.history.length
+      const totalMinutes = this.studyStats.total_study_minutes || this.studyTimeTotalMinutes
+      return (totalMinutes / 60).toFixed(2)
     },
     formattedAvgTime() {
-      const hours = Math.floor(this.avgTimeInMinutes / 60)
-      const minutes = Math.floor(this.avgTimeInMinutes % 60)
+      const avgMinutes = this.studyStats.avg_study_minutes || (this.totalStudyCount > 0 ? this.studyTimeTotalMinutes / this.totalStudyCount : 0)
+      const hours = Math.floor(avgMinutes / 60)
+      const minutes = Math.floor(avgMinutes % 60)
       if (hours > 0) {
         return `${hours}小时${minutes}分钟`
       }
       return `${minutes.toFixed(1)}分钟`
     },
-    maxTime() {
-      if (this.history.length === 0) return 0
-      const maxSeconds = Math.max(...this.history.map(r => r.time))
-      return (maxSeconds / 60).toFixed(1)
+    formattedMaxTime() {
+      if (this.studyStats.max_study_minutes) {
+        const hours = Math.floor(this.studyStats.max_study_minutes / 60)
+        const minutes = Math.floor(this.studyStats.max_study_minutes % 60)
+        if (hours > 0) return `${hours}小时${minutes}分钟`
+        return `${this.studyStats.max_study_minutes}分钟`
+      }
+      if (this.studyTimeHistory.length === 0) return '0分钟'
+      const maxMinutes = Math.max(...this.studyTimeHistory.map(r => r.study_minutes))
+      const hours = Math.floor(maxMinutes / 60)
+      const minutes = Math.floor(maxMinutes % 60)
+      if (hours > 0) return `${hours}小时${minutes}分钟`
+      return `${maxMinutes}分钟`
     },
-    minTime() {
-      if (this.history.length === 0) return 0
-      const minSeconds = Math.min(...this.history.map(r => r.time))
-      return (minSeconds / 60).toFixed(1)
+    formattedMinTime() {
+      if (this.studyStats.min_study_minutes) {
+        const hours = Math.floor(this.studyStats.min_study_minutes / 60)
+        const minutes = Math.floor(this.studyStats.min_study_minutes % 60)
+        if (hours > 0) return `${hours}小时${minutes}分钟`
+        return `${this.studyStats.min_study_minutes}分钟`
+      }
+      if (this.studyTimeHistory.length === 0) return '0分钟'
+      const minMinutes = Math.min(...this.studyTimeHistory.map(r => r.study_minutes))
+      const hours = Math.floor(minMinutes / 60)
+      const minutes = Math.floor(minMinutes % 60)
+      if (hours > 0) return `${hours}小时${minutes}分钟`
+      return `${minMinutes}分钟`
     },
+    // 答题统计相关
     totalQuestionsCount() {
-      return this.history.reduce((sum, record) => sum + record.totalQuestions, 0)
+      return this.answerHistory.reduce((sum, record) => sum + record.total_questions, 0)
     },
     totalWrongCount() {
-      return this.history.reduce((sum, record) => sum + record.wrongQuestions, 0)
+      return this.answerHistory.reduce((sum, record) => sum + record.wrong_questions, 0)
     },
     formattedOverallAccuracy() {
-      if (this.totalQuestionsCount === 0) return 0
-      const correctCount = this.totalQuestionsCount - this.totalWrongCount
-      return ((correctCount / this.totalQuestionsCount) * 100).toFixed(1)
+      const totalQs = this.studyStats.total_questions || this.totalQuestionsCount
+      if (totalQs === 0) return '0.0'
+      const correctCount = totalQs - (this.studyStats.total_wrong || this.totalWrongCount)
+      return ((correctCount / totalQs) * 100).toFixed(1)
     },
     progressPercentage() {
-      if (this.studyGoal <= 0) return 0
-      const percentage = (this.totalTimeInHours / this.studyGoal) * 100
+      const goal = this.studyStats.target_hours || this.studyGoal
+      if (goal <= 0) return 0
+      const percentage = (parseFloat(this.formattedTotalHours) / goal) * 100
       return Math.min(percentage, 100)
     }
   },
   mounted() {
     if (typeof window !== 'undefined') {
-      this.loadAllData()
-      this.$nextTick(() => {
-        this.initChart()
-      })
+      this.checkLoginStatus()
     }
   },
   beforeDestroy() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval)
     }
+    if (this.studyTimerInterval) {
+      clearInterval(this.studyTimerInterval)
+    }
     if (this.chart) {
       this.chart.destroy()
     }
   },
   methods: {
+    // 检查登录状态
+    checkLoginStatus() {
+      const token = localStorage.getItem('study_token')
+      if (token) {
+        this.isLoggedIn = true
+        this.loadAllData()
+      }
+    },
+    
+    // 登录
+    async handleLogin() {
+      if (!this.username || !this.password) return
+      
+      this.isLoggingIn = true
+      this.loginError = ''
+      
+      try {
+        const response = await fetch(`${this.apiBase}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: this.username,
+            password: this.password
+          })
+        })
+        
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          localStorage.setItem('study_token', 'logged_in')
+          this.isLoggedIn = true
+          this.loadAllData()
+        } else {
+          this.loginError = data.message || '登录失败'
+        }
+      } catch (error) {
+        this.loginError = '网络错误，请稍后重试'
+      } finally {
+        this.isLoggingIn = false
+      }
+    },
+    
+    // 退出登录
+    handleLogout() {
+      localStorage.removeItem('study_token')
+      this.isLoggedIn = false
+      this.username = ''
+      this.password = ''
+      this.loginError = ''
+    },
+    
     // 答题计时器
     startTimer() {
       this.isRunning = true
@@ -297,17 +434,9 @@ export default {
       }
       
       if (this.studyElapsedTime > 0) {
-        const record = {
-          date: new Date().toLocaleString(),
-          time: this.studyElapsedTime,
-          totalQuestions: 0,
-          wrongQuestions: 0,
-          accuracy: 0,
-          isStudyTime: true
-        }
-        this.history.push(record)
-        this.saveHistory()
-        this.updateChart()
+        this.saveStudyTimeRecord({
+          study_minutes: Math.floor(this.studyElapsedTime / 60)
+        })
         this.studyElapsedTime = 0
       }
     },
@@ -317,62 +446,212 @@ export default {
       this.elapsedTime = 0
     },
     
+    // 保存答题记录
     saveRecord() {
-      const record = {
-        date: new Date().toLocaleString(),
-        time: this.elapsedTime,
-        totalQuestions: this.totalQuestions,
-        wrongQuestions: this.wrongQuestions,
+      this.saveAnswerRecord({
+        study_minutes: Math.floor(this.elapsedTime / 60),
+        total_questions: this.totalQuestions,
+        wrong_questions: this.wrongQuestions,
         accuracy: this.accuracy
-      }
+      })
       
-      this.history.push(record)
-      this.saveHistory()
       this.resetTimer()
       this.totalQuestions = 0
       this.wrongQuestions = 0
-      this.updateChart()
     },
     
-    deleteRecord(index) {
-      this.history.splice(index, 1)
-      this.saveHistory()
-      this.updateChart()
-    },
-    
-    saveHistory() {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('studyStatsHistory', JSON.stringify(this.history))
-      }
-    },
-    
-    loadHistory() {
-      if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem('studyStatsHistory')
-        if (saved) {
-          this.history = JSON.parse(saved)
+    // 保存答题记录到后台
+    async saveAnswerRecord(record) {
+      try {
+        const response = await fetch(`${this.apiBase}/pc/study/history`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            study_time: new Date().toISOString().replace('T', ' ').substring(0, 19),
+            study_minutes: record.study_minutes,
+            total_questions: record.total_questions,
+            wrong_questions: record.wrong_questions,
+            accuracy: record.accuracy
+          })
+        })
+        
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          const newRecord = {
+            id: data.data.id,
+            study_time: new Date().toLocaleString(),
+            study_minutes: record.study_minutes,
+            total_questions: record.total_questions,
+            wrong_questions: record.wrong_questions,
+            accuracy: record.accuracy
+          }
+          this.answerHistory.unshift(newRecord)
+          this.updateChart()
+          await this.loadStudyStats()
         }
+      } catch (error) {
+        console.error('保存答题记录失败:', error)
       }
     },
     
-    saveStudyGoal() {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('studyStatsGoal', this.studyGoal.toString())
-      }
-    },
-    
-    loadStudyGoal() {
-      if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem('studyStatsGoal')
-        if (saved) {
-          this.studyGoal = parseInt(saved, 10)
+    // 保存学习时间记录到后台
+    async saveStudyTimeRecord(record) {
+      try {
+        const response = await fetch(`${this.apiBase}/pc/study/history`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            study_time: new Date().toISOString().replace('T', ' ').substring(0, 19),
+            study_minutes: record.study_minutes,
+            total_questions: 0,
+            wrong_questions: 0,
+            accuracy: 0
+          })
+        })
+        
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          const newRecord = {
+            id: data.data.id,
+            study_time: new Date().toLocaleString(),
+            study_minutes: record.study_minutes
+          }
+          this.studyTimeHistory.unshift(newRecord)
+          await this.loadStudyStats()
         }
+      } catch (error) {
+        console.error('保存学习时间记录失败:', error)
+      }
+    },
+    
+    async deleteAnswerRecord(index) {
+      const record = this.answerHistory[index]
+      if (!record.id) return
+      
+      try {
+        const response = await fetch(`${this.apiBase}/pc/study/history/${record.id}`, {
+          method: 'DELETE'
+        })
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          this.answerHistory.splice(index, 1)
+          this.updateChart()
+          await this.loadStudyStats()
+        }
+      } catch (error) {
+        console.error('删除答题记录失败:', error)
+      }
+    },
+    
+    async deleteStudyTimeRecord(index) {
+      const record = this.studyTimeHistory[index]
+      if (!record.id) return
+      
+      try {
+        const response = await fetch(`${this.apiBase}/pc/study/history/${record.id}`, {
+          method: 'DELETE'
+        })
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          this.studyTimeHistory.splice(index, 1)
+          await this.loadStudyStats()
+        }
+      } catch (error) {
+        console.error('删除学习时间记录失败:', error)
+      }
+    },
+    
+    // 加载学习统计数据
+    async loadStudyStats() {
+      try {
+        const response = await fetch(`${this.apiBase}/pc/study/stats`)
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          this.studyStats = data.data
+          this.studyGoal = data.data.target_hours || 100
+        }
+      } catch (error) {
+        console.error('加载统计数据失败:', error)
+      }
+    },
+    
+    // 加载答题历史记录
+    async loadAnswerHistory() {
+      try {
+        const response = await fetch(`${this.apiBase}/pc/study/history`)
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          this.answerHistory = data.data.list.filter(record => record.total_questions > 0)
+        }
+      } catch (error) {
+        console.error('加载答题历史记录失败:', error)
+      }
+    },
+    
+    // 加载学习时间历史记录
+    async loadStudyTimeHistory() {
+      try {
+        const response = await fetch(`${this.apiBase}/pc/study/history`)
+        const data = await response.json()
+        
+        if (data.code === 200) {
+          this.studyTimeHistory = data.data.list.filter(record => record.total_questions === 0)
+        }
+      } catch (error) {
+        console.error('加载学习时间历史记录失败:', error)
+      }
+    },
+    
+    // 更新学习目标
+    async updateStudyGoal() {
+      try {
+        await fetch(`${this.apiBase}/pc/study/stats`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            ...this.studyStats,
+            target_hours: this.studyGoal
+          })
+        })
+      } catch (error) {
+        console.error('更新学习目标失败:', error)
       }
     },
     
     loadAllData() {
-      this.loadHistory()
-      this.loadStudyGoal()
+      this.loadStudyStats()
+      this.loadAnswerHistory()
+      this.loadStudyTimeHistory()
+      this.$nextTick(() => {
+        this.initChart()
+      })
+    },
+    
+    formatDate(dateStr) {
+      if (!dateStr) return ''
+      const date = new Date(dateStr)
+      return `${date.getFullYear()}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+    },
+    
+    formatMinutes(minutes) {
+      const hours = Math.floor(minutes / 60)
+      const mins = Math.floor(minutes % 60)
+      if (hours > 0) {
+        return `${hours}小时${mins}分钟`
+      }
+      return `${mins}分钟`
     },
     
     initChart() {
@@ -380,21 +659,21 @@ export default {
       
       import('chart.js').then(Chart => {
         const ctx = this.$refs.statsChart.getContext('2d')
-        const recordCount = this.history.length;
+        const recordCount = this.answerHistory.length;
         const barWidth = recordCount < 10 ? 0.1 : 0.6;
         const categoryWidth = recordCount < 10 ? 0.1 : 0.8;
         
         this.chart = new Chart.default(ctx, {
           type: 'bar',
           data: {
-            labels: this.history.map(record => {
-              const date = new Date(record.date);
+            labels: this.answerHistory.map(record => {
+              const date = new Date(record.study_time || record.date);
               return `${(date.getFullYear() % 100).toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
             }),
             datasets: [
               {
                 label: '正确率 (%)',
-                data: this.history.map(record => record.accuracy),
+                data: this.answerHistory.map(record => record.accuracy),
                 backgroundColor: 'rgba(0, 255, 0, 0.7)',
                 borderColor: '#00ff00',
                 borderWidth: 1,
@@ -403,8 +682,8 @@ export default {
                 categoryPercentage: categoryWidth,
               },
               {
-                label: '时间 (分钟)',
-                data: this.history.map(record => parseFloat((record.time / 60).toFixed(1))),
+                label: '用时 (分钟)',
+                data: this.answerHistory.map(record => parseFloat(record.study_minutes.toFixed(1))),
                 borderColor: '#00ffff',
                 backgroundColor: 'rgba(0, 255, 255, 0.1)',
                 yAxisID: 'y-axis-0',
@@ -429,7 +708,7 @@ export default {
                   position: 'left',
                   scaleLabel: {
                     display: true,
-                    labelString: '时间 (分钟)',
+                    labelString: '用时 (分钟)',
                     fontColor: '#00ffff'
                   },
                   gridLines: {
@@ -483,7 +762,7 @@ export default {
             },
             title: {
               display: true,
-              text: '学习统计趋势',
+              text: '答题统计趋势',
               fontColor: '#ffffff',
               fontSize: 18
             },
@@ -512,16 +791,16 @@ export default {
         return
       }
       
-      const recordCount = this.history.length;
+      const recordCount = this.answerHistory.length;
       const barWidth = recordCount < 10 ? 0.1 : 0.6;
       const categoryWidth = recordCount < 10 ? 0.1 : 0.8;
       
-      const labels = this.history.map(record => {
-        const date = new Date(record.date);
+      const labels = this.answerHistory.map(record => {
+        const date = new Date(record.study_time || record.date);
         return `${(date.getFullYear() % 100).toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}`;
       })
-      const accuracies = this.history.map(record => record.accuracy)
-      const times = this.history.map(record => parseFloat((record.time / 60).toFixed(1)))
+      const accuracies = this.answerHistory.map(record => record.accuracy)
+      const times = this.answerHistory.map(record => parseFloat(record.study_minutes.toFixed(1)))
       
       this.chart.data.labels = labels
       this.chart.data.datasets[0].data = accuracies
@@ -535,6 +814,95 @@ export default {
 </script>
 
 <style scoped>
+/* 登录容器样式 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-card {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+  text-align: center;
+}
+
+.login-card h1 {
+  margin-bottom: 30px;
+  color: #00ffff;
+  font-size: 2rem;
+  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-form .form-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.login-form label {
+  color: #00ffff;
+  font-weight: bold;
+}
+
+.login-form .input {
+  width: 92%;
+  padding: 12px 15px;
+  border: 1px solid rgba(0, 255, 255, 0.5);
+  border-radius: 4px;
+  font-size: 1.1rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s ease;
+}
+
+.login-form .input:focus {
+  outline: none;
+  border-color: #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+.login-btn {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.2rem;
+}
+
+.error-message {
+  color: #ff4444;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  min-height: 20px;
+}
+
+/* 头部栏 */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logout-btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
 /* 科技风格基础样式 */
 .study-stats-container {
   max-width: 1000px;
@@ -599,7 +967,7 @@ h2 {
   letter-spacing: 3px;
   font-family: 'Courier New', monospace;
   background: rgba(0, 255, 255, 0.1);
-  padding: 20px 40px;
+  padding: 20px 20px;
   border-radius: 8px;
   border: 1px solid rgba(0, 255, 255, 0.5);
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
@@ -727,6 +1095,7 @@ label {
 
 .btn-small {
   padding: 8px 15px;
+  width: 80px;
   font-size: 0.9rem;
   letter-spacing: 0.5px;
 }
@@ -1066,6 +1435,11 @@ label {
   width: 100px;
 }
 
+.goal-save-btn {
+  padding: 10px 20px;
+  font-size: 0.95rem;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .study-stats-container {
@@ -1144,6 +1518,15 @@ label {
   
   .goal-input {
     width: 100%;
+  }
+  
+  .login-card {
+    padding: 30px 20px;
+  }
+  
+  .header-bar {
+    flex-direction: column;
+    gap: 15px;
   }
 }
 </style>

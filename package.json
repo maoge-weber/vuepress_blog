@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "author": "zeal",
   "scripts": {
-    "dev": "NODE_OPTIONS=--openssl-legacy-provider vuepress dev .",
-    "build": "NODE_OPTIONS=--openssl-legacy-provider vuepress build .",
+    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider vuepress dev .",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider vuepress build .",
     "upcdn": "vuepress build . && node ./scripts/upcdn.js"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "glob": "^7.2.3",
     "mime": "^2.6.0",
     "path": "^0.12.7",
