@@ -2,35 +2,55 @@
   <div class="study-stats-container">
     <h1>学习统计</h1>
     
-    <!-- 时间记录器 -->
-    <div class="stats-section">
-      <h2>时间记录</h2>
-      <div class="timer-container">
-        <div class="timer-display">{{ formattedTime }}</div>
-        <div class="timer-buttons">
-          <button @click="startTimer" v-if="!isRunning" class="btn btn-primary">开始</button>
-          <button @click="stopTimer" v-else class="btn btn-danger">停止</button>
+    <!-- 双计时器并排布局 -->
+    <div class="dual-timer-container">
+      <!-- 答题计时器 -->
+      <div class="stats-section timer-section">
+        <h2>答题计时</h2>
+        <div class="timer-container">
+          <div class="timer-display">{{ formattedTime }}</div>
+          <div class="timer-buttons">
+            <button @click="startTimer" v-if="!isRunning" class="btn btn-primary">开始</button>
+            <button @click="stopTimer" v-else class="btn btn-danger">停止</button>
+          </div>
+        </div>
+        <div class="form-container">
+          <div class="form-item">
+            <label>总题数:</label>
+            <input type="number" v-model.number="totalQuestions" min="0" class="input">
+          </div>
+          <div class="form-item">
+            <label>错误题数:</label>
+            <input type="number" v-model.number="wrongQuestions" min="0" max="totalQuestions" class="input">
+          </div>
+          <div class="form-item">
+            <label>正确率:</label>
+            <div class="accuracy-display">{{ formattedAccuracy }}%</div>
+          </div>
+          <button @click="saveRecord" class="btn btn-success" :disabled="!canSave">保存记录</button>
         </div>
       </div>
-    </div>
-    
-    <!-- 答题统计 -->
-    <div class="stats-section">
-      <h2>答题统计</h2>
-      <div class="form-container">
-        <div class="form-item">
-          <label>总题数:</label>
-          <input type="number" v-model.number="totalQuestions" min="0" class="input">
+      
+      <!-- 学习时间计时器 -->
+      <div class="stats-section timer-section">
+        <h2>学习时间</h2>
+        <div class="timer-container">
+          <div class="timer-display study-timer">{{ formattedStudyTime }}</div>
+          <div class="timer-buttons">
+            <button @click="startStudyTimer" v-if="!isStudyRunning" class="btn btn-primary">开始</button>
+            <button @click="stopStudyTimer" v-else class="btn btn-danger">停止</button>
+          </div>
         </div>
-        <div class="form-item">
-          <label>错误题数:</label>
-          <input type="number" v-model.number="wrongQuestions" min="0" max="totalQuestions" class="input">
+        <div class="study-time-info">
+          <div class="info-item">
+            <span class="info-label">本次学习:</span>
+            <span class="info-value">{{ formattedStudyTime }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">累计学习:</span>
+            <span class="info-value">{{ formattedTotalTime }}</span>
+          </div>
         </div>
-        <div class="form-item">
-          <label>正确率:</label>
-          <div class="accuracy-display">{{ formattedAccuracy }}%</div>
-        </div>
-        <button @click="saveRecord" class="btn btn-success" :disabled="!canSave">保存记录</button>
       </div>
     </div>
     
@@ -40,13 +60,16 @@
       <div class="history-container">
         <div v-if="history.length === 0" class="empty-history">暂无历史记录</div>
         <div v-else class="history-list">
-          <div v-for="(record, index) in history" :key="index" class="history-item">
+          <div v-for="(record, index) in history" :key="index" class="history-item" :class="{ 'study-time-record': record.isStudyTime }">
             <div class="history-info">
               <span class="history-date">{{ record.date }}</span>
               <span class="history-time">时间: {{ (record.time / 60).toFixed(1) }}分钟</span>
-              <span class="history-questions">答题: {{ record.totalQuestions }}题</span>
-              <span class="history-wrong">错误: {{ record.wrongQuestions }}题</span>
-              <span class="history-accuracy">正确率: {{ record.accuracy }}%</span>
+              <span v-if="record.isStudyTime" class="history-study-tag">学习时间</span>
+              <span v-else>
+                <span class="history-questions">答题: {{ record.totalQuestions }}题</span>
+                <span class="history-wrong">错误: {{ record.wrongQuestions }}题</span>
+                <span class="history-accuracy">正确率: {{ record.accuracy }}%</span>
+              </span>
             </div>
             <button @click="deleteRecord(index)" class="btn btn-small btn-danger">删除</button>
           </div>
@@ -61,6 +84,62 @@
         <canvas ref="statsChart"></canvas>
       </div>
     </div>
+    
+    <!-- 学习时间统计 -->
+    <div class="stats-section">
+      <h2>学习时间统计</h2>
+      <div class="overall-stats-container">
+        <div class="stat-card">
+          <div class="stat-label">总学习次数</div>
+          <div class="stat-value total-count">{{ totalStudyCount }}次</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">总学习时间</div>
+          <div class="stat-value total-time">{{ formattedTotalTime }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">平均学习时间</div>
+          <div class="stat-value avg-time">{{ formattedAvgTime }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">最长学习时间</div>
+          <div class="stat-value max-time">{{ formattedMaxTime }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">最短学习时间</div>
+          <div class="stat-value min-time">{{ formattedMinTime }}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">累计答题数</div>
+          <div class="stat-value total-questions">{{ totalQuestionsCount }}题</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">累计错误数</div>
+          <div class="stat-value total-wrong">{{ totalWrongCount }}题</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">总体正确率</div>
+          <div class="stat-value overall-accuracy">{{ formattedOverallAccuracy }}%</div>
+        </div>
+      </div>
+      <div class="progress-section">
+        <h3>学习进度</h3>
+        <div class="progress-bar-container">
+          <div class="progress-info">
+            <span>学习目标: {{ studyGoal }}小时</span>
+            <span>已完成: {{ formattedTotalHours }}小时</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+          </div>
+          <div class="progress-percentage">{{ progressPercentage.toFixed(1) }}%</div>
+        </div>
+        <div class="goal-setting">
+          <label>设置学习目标(小时):</label>
+          <input type="number" v-model.number="studyGoal" min="1" class="input goal-input" @change="saveStudyGoal">
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -69,6 +148,7 @@ export default {
   name: 'StudyStats',
   data() {
     return {
+      // 答题计时器
       isRunning: false,
       startTime: null,
       elapsedTime: 0,
@@ -76,7 +156,13 @@ export default {
       totalQuestions: 0,
       wrongQuestions: 0,
       history: [],
-      chart: null
+      chart: null,
+      studyGoal: 100,
+      // 学习时间计时器
+      isStudyRunning: false,
+      studyStartTime: null,
+      studyElapsedTime: 0,
+      studyTimerInterval: null
     }
   },
   computed: {
@@ -94,11 +180,75 @@ export default {
     },
     canSave() {
       return this.elapsedTime > 0 && this.totalQuestions > 0
+    },
+    formattedStudyTime() {
+      const hours = Math.floor(this.studyElapsedTime / 3600)
+      const minutes = Math.floor((this.studyElapsedTime % 3600) / 60)
+      const seconds = this.studyElapsedTime % 60
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+    },
+    totalStudyCount() {
+      return this.history.length
+    },
+    totalTimeInSeconds() {
+      return this.history.reduce((sum, record) => sum + record.time, 0)
+    },
+    totalTimeInMinutes() {
+      return this.totalTimeInSeconds / 60
+    },
+    totalTimeInHours() {
+      return this.totalTimeInMinutes / 60
+    },
+    formattedTotalTime() {
+      const hours = Math.floor(this.totalTimeInMinutes / 60)
+      const minutes = Math.floor(this.totalTimeInMinutes % 60)
+      return `${hours}小时${minutes}分钟`
+    },
+    formattedTotalHours() {
+      return this.totalTimeInHours.toFixed(2)
+    },
+    avgTimeInMinutes() {
+      if (this.history.length === 0) return 0
+      return this.totalTimeInMinutes / this.history.length
+    },
+    formattedAvgTime() {
+      const hours = Math.floor(this.avgTimeInMinutes / 60)
+      const minutes = Math.floor(this.avgTimeInMinutes % 60)
+      if (hours > 0) {
+        return `${hours}小时${minutes}分钟`
+      }
+      return `${minutes.toFixed(1)}分钟`
+    },
+    maxTime() {
+      if (this.history.length === 0) return 0
+      const maxSeconds = Math.max(...this.history.map(r => r.time))
+      return (maxSeconds / 60).toFixed(1)
+    },
+    minTime() {
+      if (this.history.length === 0) return 0
+      const minSeconds = Math.min(...this.history.map(r => r.time))
+      return (minSeconds / 60).toFixed(1)
+    },
+    totalQuestionsCount() {
+      return this.history.reduce((sum, record) => sum + record.totalQuestions, 0)
+    },
+    totalWrongCount() {
+      return this.history.reduce((sum, record) => sum + record.wrongQuestions, 0)
+    },
+    formattedOverallAccuracy() {
+      if (this.totalQuestionsCount === 0) return 0
+      const correctCount = this.totalQuestionsCount - this.totalWrongCount
+      return ((correctCount / this.totalQuestionsCount) * 100).toFixed(1)
+    },
+    progressPercentage() {
+      if (this.studyGoal <= 0) return 0
+      const percentage = (this.totalTimeInHours / this.studyGoal) * 100
+      return Math.min(percentage, 100)
     }
   },
   mounted() {
     if (typeof window !== 'undefined') {
-      this.loadHistory()
+      this.loadAllData()
       this.$nextTick(() => {
         this.initChart()
       })
@@ -113,6 +263,7 @@ export default {
     }
   },
   methods: {
+    // 答题计时器
     startTimer() {
       this.isRunning = true
       this.startTime = Date.now() - this.elapsedTime * 1000
@@ -126,6 +277,38 @@ export default {
       if (this.timerInterval) {
         clearInterval(this.timerInterval)
         this.timerInterval = null
+      }
+    },
+    
+    // 学习时间计时器
+    startStudyTimer() {
+      this.isStudyRunning = true
+      this.studyStartTime = Date.now() - this.studyElapsedTime * 1000
+      this.studyTimerInterval = setInterval(() => {
+        this.studyElapsedTime = Math.floor((Date.now() - this.studyStartTime) / 1000)
+      }, 1000)
+    },
+    
+    stopStudyTimer() {
+      this.isStudyRunning = false
+      if (this.studyTimerInterval) {
+        clearInterval(this.studyTimerInterval)
+        this.studyTimerInterval = null
+      }
+      
+      if (this.studyElapsedTime > 0) {
+        const record = {
+          date: new Date().toLocaleString(),
+          time: this.studyElapsedTime,
+          totalQuestions: 0,
+          wrongQuestions: 0,
+          accuracy: 0,
+          isStudyTime: true
+        }
+        this.history.push(record)
+        this.saveHistory()
+        this.updateChart()
+        this.studyElapsedTime = 0
       }
     },
     
@@ -170,6 +353,26 @@ export default {
           this.history = JSON.parse(saved)
         }
       }
+    },
+    
+    saveStudyGoal() {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('studyStatsGoal', this.studyGoal.toString())
+      }
+    },
+    
+    loadStudyGoal() {
+      if (typeof window !== 'undefined') {
+        const saved = localStorage.getItem('studyStatsGoal')
+        if (saved) {
+          this.studyGoal = parseInt(saved, 10)
+        }
+      }
+    },
+    
+    loadAllData() {
+      this.loadHistory()
+      this.loadStudyGoal()
     },
     
     initChart() {
@@ -623,12 +826,82 @@ label {
   border: 1px solid rgba(255, 0, 255, 0.3);
 }
 
+.history-study-tag {
+  color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+  padding: 5px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  font-weight: bold;
+}
+
+.study-time-record {
+  border-left: 3px solid #00ff88;
+}
+
 .history-accuracy {
   color: #00ff00;
   background: rgba(0, 255, 0, 0.1);
   padding: 5px 10px;
   border-radius: 4px;
   border: 1px solid rgba(0, 255, 0, 0.3);
+}
+
+/* 双计时器布局 */
+.dual-timer-container {
+  display: flex;
+  gap: 25px;
+  justify-content: space-between;
+}
+
+.timer-section {
+  flex: 1;
+  min-width: 300px;
+}
+
+.timer-section .form-container {
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: flex-start;
+}
+
+.timer-section .form-item {
+  flex: 0 0 calc(50% - 8px);
+  min-width: 140px;
+}
+
+.study-timer {
+  color: #00ff88 !important;
+  text-shadow: 0 0 20px rgba(0, 255, 136, 0.8) !important;
+}
+
+.study-time-info {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed rgba(0, 255, 255, 0.1);
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  color: #00ffff;
+  font-size: 0.95rem;
+}
+
+.info-value {
+  color: #00ff88;
+  font-weight: bold;
+  font-size: 1rem;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
 }
 
 /* 图表样式 */
@@ -642,10 +915,174 @@ label {
   box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
 }
 
+/* 学习时间统计样式 */
+.overall-stats-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+  border-color: rgba(0, 255, 255, 0.6);
+  transform: translateY(-3px);
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  color: #00ffff;
+  margin-bottom: 12px;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 0 10px currentColor;
+}
+
+.stat-value.total-count {
+  color: #00ffff;
+}
+
+.stat-value.total-time {
+  color: #00ff88;
+}
+
+.stat-value.avg-time {
+  color: #ffff00;
+}
+
+.stat-value.max-time {
+  color: #ff00ff;
+}
+
+.stat-value.min-time {
+  color: #ff8800;
+}
+
+.stat-value.total-questions {
+  color: #00ffff;
+}
+
+.stat-value.total-wrong {
+  color: #ff4444;
+}
+
+.stat-value.overall-accuracy {
+  color: #00ff00;
+}
+
+/* 学习进度样式 */
+.progress-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.progress-section h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #00ff00;
+  font-size: 1.3rem;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.progress-bar-container {
+  margin-bottom: 25px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  color: #00ffff;
+}
+
+.progress-bar {
+  height: 30px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff00, #00ffff, #00ff88);
+  border-radius: 15px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  animation: progress-glow 2s ease-in-out infinite;
+}
+
+@keyframes progress-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 255, 0, 0.8);
+  }
+}
+
+.progress-percentage {
+  text-align: center;
+  margin-top: 12px;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #00ff00;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+}
+
+.goal-setting {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.goal-setting label {
+  white-space: nowrap;
+}
+
+.goal-input {
+  width: 100px;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .study-stats-container {
     padding: 15px;
+  }
+  
+  .dual-timer-container {
+    flex-direction: column;
+  }
+  
+  .timer-section {
+    min-width: auto;
+  }
+  
+  .timer-section .form-item {
+    flex: 1;
+    min-width: auto;
   }
   
   .form-container {
@@ -685,6 +1122,28 @@ label {
   
   .chart-container {
     height: 350px;
+  }
+  
+  .overall-stats-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .stat-card {
+    padding: 15px;
+  }
+  
+  .stat-value {
+    font-size: 1.4rem;
+  }
+  
+  .goal-setting {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .goal-input {
+    width: 100%;
   }
 }
 </style>
